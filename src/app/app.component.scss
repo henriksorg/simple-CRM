@@ -1,0 +1,45 @@
+.mat-drawer-container{
+    height: 100vh;
+}
+
+.sidenav{
+    width: 300px;
+
+}
+
+.logo-container{
+    padding: 16px;
+    border-bottom: 1px solid white;
+    min-height: 56px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+mat-toolbar{
+    min-height: 56px;
+    height: 56px;
+}
+
+.menu-items{
+    li{
+        padding-left: 16px;
+        padding-right: 16px;
+        height: 48px;
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        cursor: pointer;
+        &:hover{
+            background: #5f5f5f;
+        }
+        mat-icon{
+            margin-right: 16px;
+        }
+    }
+}
+
+.router-container{
+    padding: 16px 56px;
+}
