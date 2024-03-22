@@ -1,8 +1,9 @@
 import { DataSource } from '@angular/cdk/collections';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
-import { map } from 'rxjs/operators';
+import { map, startWith, switchMap } from 'rxjs/operators';
 import { Observable, of as observableOf, merge } from 'rxjs';
+import { UserService } from '../user-service/user.service';
 
 // TODO: Replace this with your own data model type
 export interface UserTableItem {
@@ -15,7 +16,29 @@ export interface UserTableItem {
   email: string
 }
 
+
 // TODO: replace this with real data from your application
+// const userData: UserTableItem[] = [
+//   {
+//     birthDate: 914454000000,
+//     zipCode: '73560',
+//     street: 'Stauferweg 6',
+//     firstName: 'Henrik',
+//     lastName: 'Sorg',
+//     city: 'Böbingen an der Rems',
+//     email: 'henrik@reif-sorg.de'
+//   },
+//   {
+//     lastName: 'Wideman',
+//     street: 'Am Seepark',
+//     city: 'Freeburrg',
+//     birthDate: 992728800000,
+//     zipCode: '73542',
+//     firstName: 'Helm',
+//     email: 'helm@wideman.de'
+//   }
+// ];
+
 
 /**
  * Data source for the UserTable view. This class should
@@ -23,34 +46,12 @@ export interface UserTableItem {
  * (including sorting, pagination, and filtering).
  */
 export class UserTableDataSource extends DataSource<UserTableItem> {
-  userData: UserTableItem[] = [
-    {
-      birthDate: 914454000000,
-      zipCode: '73560',
-      street: 'Stauferweg 6',
-      firstName: 'Henrik',
-      lastName: 'Sorg',
-      city: 'Böbingen an der Rems',
-      email: 'henrik@reif-sorg.de'
-    },
-    {
-      lastName: 'Wideman',
-      street: 'Am Seepark',
-      city: 'Freeburrg',
-      birthDate: 992728800000,
-      zipCode: '73542',
-      firstName: 'Helm',
-      email: 'helm@wideman.de'
-    }
-  ];
-
-
-
-  data: UserTableItem[] = this.userData;
+  userData: UserTableItem[] | undefined;
+  data: UserTableItem[] = [];
   paginator: MatPaginator | undefined;
   sort: MatSort | undefined;
 
-  constructor() {
+  constructor(private userService: UserService) {
     super();
     
   }
@@ -61,16 +62,23 @@ export class UserTableDataSource extends DataSource<UserTableItem> {
    * @returns A stream of the items to be rendered.
    */
   connect(): Observable<UserTableItem[]> {
-    if (this.paginator && this.sort) {
-      // Combine everything that affects the rendered data into one update
-      // stream for the data-table to consume.
-      return merge(observableOf(this.data), this.paginator.page, this.sort.sortChange)
-        .pipe(map(() => {
-          return this.getPagedData(this.getSortedData([...this.data ]));
-        }));
-    } else {
+    if (!this.paginator || !this.sort) {
       throw Error('Please set the paginator and sort on the data source before connecting.');
     }
+  
+    // Erstelle Observables für Sortierungs- und Paginierungsereignisse
+    const sortChange = this.sort.sortChange;
+    const pageChange = this.paginator.page;
+  
+    // Beobachte Änderungen und lade Daten neu
+    return merge(sortChange, pageChange).pipe(
+      startWith({}), // Starte mit einem initialen Wert, um Daten sofort zu laden
+      switchMap(() => {
+        return this.userService.getUsers(); // Lade Benutzerdaten neu
+      }),
+      map(data => this.getSortedData([...data])), // Sortiere Daten
+      map(data => this.getPagedData(data)) // Paginiere Daten
+    );
   }
 
   /**
