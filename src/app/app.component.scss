@@ -40,6 +40,16 @@ mat-toolbar{
     }
 }
 
+.logo-container{
+    mat-icon{
+        transform: scale(2);
+        margin-right: 16px;
+    }
+    span{
+        font-size: 28px;
+    }
+}
+
 .router-container{
     padding: 16px 56px;
 }
