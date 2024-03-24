@@ -16,6 +16,7 @@ import { NgIf } from '@angular/common';
 
 
 
+
 @Component({
   selector: 'app-dialog-add-user',
   standalone: true,
@@ -23,7 +24,7 @@ import { NgIf } from '@angular/common';
   imports: [MatDialogModule, 
     MatButtonModule, 
     MatFormFieldModule, 
-    MatInputModule, 
+    MatInputModule,
     MatIconModule, 
     MatDatepickerModule, 
     FormsModule, 
@@ -32,6 +33,7 @@ import { NgIf } from '@angular/common';
   templateUrl: './dialog-add-user.component.html',
   styleUrl: './dialog-add-user.component.scss'
 })
+
 export class DialogAddUserComponent {
   user = new User();
   birthDate!: Date;
@@ -48,15 +50,17 @@ export class DialogAddUserComponent {
     await this.addUser();
     this.dialogRef.close();
   }
+
   async addUser(){
     this.loading = true;
     await addDoc(this.getUsersRef(), {
       firstName: this.user.firstName,
       lastName: this.user.lastName,
+      email: this.user.email, 
       birthDate: this.user.birthDate,
       street: this.user.street,
       zipCode: this.user.zipCode,
-      city: this.user.city
+      city: this.user.city,
     });
     this.loading = false;
     this.close = true;

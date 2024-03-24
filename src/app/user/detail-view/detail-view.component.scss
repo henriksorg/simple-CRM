@@ -1,0 +1,64 @@
+section {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.user-profile {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    background-color: #464646;
+    border-radius: inherit;
+}
+
+.user-header {
+    background-color: #c45824;
+    border-radius: inherit;
+
+    span {
+        font-size: 40px;
+        line-height: 42px;
+        margin-right: 16px;
+
+    }
+
+    mat-icon {
+        transform: scale(1.5);
+    }
+}
+
+.edit-users {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.card-head {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+    border-bottom: white 1px solid;
+    width: 100%;
+    padding-bottom: 8px;
+    mat-icon {
+        transform: scale(1.25);
+    }
+
+    span {
+        margin-left: 16px;
+        font-size: 25px;
+        font-weight: 100;
+    }
+}
+
+table {
+    width: 100%;
+    tr{
+        width: 100%;
+        td{
+            width: 50%;
+            padding: 0;
+        }
+    }
+}

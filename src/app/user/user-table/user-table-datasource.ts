@@ -13,7 +13,8 @@ export interface UserTableItem {
   zipCode: string;
   street: string; 
   city: string;
-  email: string
+  email: string;
+  id: string;
 }
 
 
@@ -74,7 +75,7 @@ export class UserTableDataSource extends DataSource<UserTableItem> {
     return merge(sortChange, pageChange).pipe(
       startWith({}), // Starte mit einem initialen Wert, um Daten sofort zu laden
       switchMap(() => {
-        return this.userService.getUsers(); // Lade Benutzerdaten neu
+        return this.userService.getUsers(); // Lade Benutzerdaten neu        
       }),
       map(data => this.getSortedData([...data])), // Sortiere Daten
       map(data => this.getPagedData(data)) // Paginiere Daten

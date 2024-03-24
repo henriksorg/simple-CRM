@@ -2,7 +2,6 @@
 <h2 mat-dialog-title>Add User</h2>
 <mat-dialog-content>
   <div>
-
     <mat-form-field appearance="outline" class="mr-16" color="accent">
       <mat-label>First Name</mat-label>
       <input [(ngModel)]="user.firstName" matInput [disabled]="loading">
@@ -15,7 +14,7 @@
     </mat-form-field>
   </div>
 
-  <mat-form-field appearance="outline" class="w-100" color="accent" >
+  <mat-form-field appearance="outline" class="w-100" color="accent">
     <mat-label>Email Adress</mat-label>
     <input matInput [(ngModel)]="user.email" [disabled]="loading">
     <!-- <mat-hint>Please enter name</mat-hint> -->

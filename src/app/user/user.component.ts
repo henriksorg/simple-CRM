@@ -38,8 +38,6 @@ export class UserComponent {
   name!: string;
 
 
-  firestore: Firestore = inject(Firestore)
-
 
   constructor(public dialog: MatDialog, public userService: UserService) {
     
