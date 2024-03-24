@@ -5,11 +5,12 @@ import { Firestore, collection, deleteDoc, doc } from '@angular/fire/firestore';
 import { MatDialog, MatDialogActions, MatDialogContent, MatDialogModule } from '@angular/material/dialog';
 import { MatLabel } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-dialog-delete-user',
   standalone: true,
-  imports: [MatDialogActions, MatDialogContent, MatDialogModule, MatButtonModule],
+  imports: [MatDialogActions, MatDialogContent, MatDialogModule, MatButtonModule, RouterLink],
   templateUrl: './dialog-delete-user.component.html',
   styleUrl: './dialog-delete-user.component.scss'
 })
@@ -21,17 +22,8 @@ export class DialogDeleteUserComponent {
   constructor(public dialog: MatDialog) {
   }
   async delete() {
-    debugger
     const docRef = doc(this.firestore, `users`, this.user.id);
-    try{
-      debugger
-      await deleteDoc(docRef);
-      console.log('success');
-    }
-    catch{
-      console.log('error');
-      
-    }
-    
+    await deleteDoc(docRef);
+    // this.router.navigate(["/home"]);
   }
 }

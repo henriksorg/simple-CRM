@@ -1,8 +1,8 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
-import { DocumentData, collection, getDocs } from "firebase/firestore";
+import { DocumentData, Unsubscribe, collection, getDocs } from "firebase/firestore";
 import { UserService } from '../user-service/user.service';
 import { UserComponent } from '../user.component';
 import { User } from '../../../models/user.class';
@@ -12,6 +12,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatDialog } from '@angular/material/dialog';
 import { DialogEditUserComponent } from './dialog-edit-user/dialog-edit-user.component';
 import { DialogDeleteUserComponent } from './dialog-delete-user/dialog-delete-user.component';
+import { Firestore, doc, onSnapshot } from '@angular/fire/firestore';
 
 
 
@@ -24,11 +25,19 @@ import { DialogDeleteUserComponent } from './dialog-delete-user/dialog-delete-us
 })
 
 export class DetailViewComponent implements OnInit, OnDestroy {
+  firestore: Firestore = inject(Firestore);
+
   user: User = new User;
   private routeSub!: Subscription;
   userId!: string;
+  unsubUser: any;
 
-  constructor(private route: ActivatedRoute, private userService: UserService, public dialog: MatDialog,) { }
+  constructor(private route: ActivatedRoute, private userService: UserService, public dialog: MatDialog,) {
+    this.getUserByLink();
+    this.getUserById();
+  }
+
+
   deleteUser() {
     const dialog = this.dialog.open(DialogDeleteUserComponent)
     dialog.componentInstance.user = this.user;
@@ -37,30 +46,34 @@ export class DetailViewComponent implements OnInit, OnDestroy {
   editMenu() {
     const dialog = this.dialog.open(DialogEditUserComponent)
     dialog.componentInstance.user = this.user;
+    // this.unsubUser();
   }
 
   async ngOnInit(): Promise<void> {
-    this.getUserByLink();
+    
   }
 
-  async getUserByLink() {
+  getUserByLink() {
     this.routeSub = this.route.params.subscribe(params => {
-      console.log('getting the params:', params);
       this.userId = params['id'];
-      console.log('user id from link:', this.userId);
     });
-    let user = await this.userService.getUserById(this.userId)
-    console.log('raw user:', user);
-    this.user = new User(user)
     this.user.id = this.userId;
-    console.log('finished user', user);
-
   }
 
-
+  getUserById() {
+    const docRef = doc(this.firestore, 'users', this.userId);
+    this.unsubUser = onSnapshot(docRef, (user) => {
+      console.log(user.data());
+      this.user =  new User(user.data())
+      this.user.id = user.id;
+      console.log(this.user);
+    });
+  }
+  
   ngOnDestroy() {
-    if (this.routeSub) {
-      this.routeSub.unsubscribe();
-    }
+    this.unsubUser();
   }
 }
+
+
+

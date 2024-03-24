@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy, inject } from '@angular/core';
-import { Firestore, collection, collectionData, getDoc } from '@angular/fire/firestore';
+import { Firestore, collection, collectionData, getDoc, onSnapshot } from '@angular/fire/firestore';
 import {  doc } from "firebase/firestore";
 import { Observable, Subscription } from 'rxjs';
 import { UserTableItem } from '../user-table/user-table-datasource';
@@ -21,15 +21,11 @@ export class UserService implements OnDestroy {
 
   async getUserById(id: string) {
     const docRef = doc(this.firestore, 'users', id);
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-      console.log("Document data:", docSnap.data());
-      return docSnap.data();
-    } else {
-      console.log("No such document!");
-      return null;
-    }
+    // const docSnap = await getDoc(docRef);
+    const unsub = onSnapshot(docRef, (doc) => {
+      console.log("Current data: ", doc.data());
+      doc.data();
+    });
   }
 
   getUsers(): Observable<UserTableItem[]> {
